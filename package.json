@@ -1,0 +1,34 @@
+{
+  "name": "browser-cache-store",
+  "description": "A simple cache store that using indexedDB (fallbacks to localStorage if indexedDB is not available).",
+  "version": "0.0.1-alpha.1",
+  "main": "lib/index.js",
+  "types": "es/index.d.ts",
+  "module": "es/index.js",
+  "files": [
+    "es",
+    "lib"
+  ],
+  "scripts": {
+    "build": "npm run build:es && npm run build:lib",
+    "build:es": "tsc --outDir es --module esnext --target es2020",
+    "build:lib": "tsc --outDir lib",
+    "dev": "tsc --outDir es --module esnext --watch --pretty false --preserveWatchOutput true",
+    "format": "prettier --write .",
+    "release": "npm run build && npm publish --registry=https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "indexedDB",
+    "localStorage"
+  ],
+  "author": "JOHN YUAN",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/john-yuan/browser-cache-store"
+  },
+  "devDependencies": {
+    "prettier": "2.8.8",
+    "typescript": "^5.0.4"
+  }
+}
