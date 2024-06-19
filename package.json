@@ -1,7 +1,7 @@
 {
   "name": "browser-cache-store",
   "description": "A simple cache store that using indexedDB (fallbacks to localStorage if indexedDB is not available).",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "main": "lib/index.js",
   "types": "es/index.d.ts",
   "module": "es/index.js",
