@@ -6,6 +6,7 @@ export interface CacheStore {
     key: string,
     update: (prev: T | undefined) => T
   ): Promise<CacheUpdated<T>>
+  set<T = any>(key: string, value: T): Promise<void>
   get<T = any>(key: string): Promise<T | undefined>
   remove(key: string): Promise<void>
   clear(): Promise<void>
@@ -49,6 +50,16 @@ export class IndexedCacheStore implements CacheStore {
         const get = store.get(key)
         get.onerror = reject
         get.onsuccess = () => resolve(get.result)
+      })
+    })
+  }
+
+  async set<T = any>(key: string, value: T) {
+    return new Promise<void>((resolve, reject) => {
+      this.store('readwrite', reject, (store) => {
+        const put = store.put(value, key)
+        put.onerror = reject
+        put.onsuccess = () => resolve()
       })
     })
   }
@@ -132,6 +143,12 @@ export class LocalStorageCacheStore implements CacheStore {
     this.putJSON(json)
 
     return { prev, next }
+  }
+
+  async set<T = any>(key: string, value: T): Promise<void> {
+    const json = this.getJSON()
+    json.data[key] = value
+    this.putJSON(json)
   }
 
   async get<T = any>(key: string): Promise<T | undefined> {

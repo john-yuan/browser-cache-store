@@ -16,13 +16,16 @@ const store = createCacheStore('test_cache_store')
 
 // put value
 store
-  .put('counter', (prev) => {
-    return (prev || 0) + 1
-  })
+  .put('counter', (prev) => (prev || 0) + 1)
   .then((res) => {
     console.log(res.prev)
     console.log(res.next)
   })
+
+// set value
+store.set('key', 'value').then(() => {
+  console.log('set')
+})
 
 // get value
 store.get('key').then((value) => {
@@ -30,8 +33,12 @@ store.get('key').then((value) => {
 })
 
 // remove key
-store.remove('key')
+store.remove('key').then(() => {
+  console.log('removed')
+})
 
 // remove all
-store.clear()
+store.clear().then(() => {
+  console.log('cleared')
+})
 ```
