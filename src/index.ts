@@ -2,14 +2,44 @@ export type CacheUpdated<T = any> = { prev?: T; next: T }
 export type JSONDataObject = { data: Record<string, any> }
 
 export interface CacheStore {
+  /**
+   * Adds or updates a record in store with the given value and key.
+   * The first argument of the `update` function is the previous value
+   * (can be `undefined` if there is no previous value) of the given key.
+   * This operation is atomic.
+   */
   put<T = any>(
     key: string,
     update: (prev: T | undefined) => T
   ): Promise<CacheUpdated<T>>
+
+  /**
+   * Adds or updates a record in store with the given value and key.
+   */
   set<T = any>(key: string, value: T): Promise<void>
+
+  /**
+   * Retrieves the value by the given key. Returns `undefined` if there
+   * is no value for the key.
+   */
   get<T = any>(key: string): Promise<T | undefined>
+
+  /**
+   * Deletes record in store with the given key.
+   */
   remove(key: string): Promise<void>
+
+  /**
+   * Deletes all records in store.
+   */
   clear(): Promise<void>
+
+  /**
+   * This method is only used to check if the database is opened.
+   * You don't need to call this method before calling any other methods
+   * (`put`, `set`, `get`, `remove` and `clear`).
+   */
+  ready(): Promise<void>
 }
 
 export class IndexedCacheStore implements CacheStore {
@@ -22,8 +52,8 @@ export class IndexedCacheStore implements CacheStore {
       req.onerror = reject
       req.onupgradeneeded = () => req.result.createObjectStore('data')
       req.onsuccess = () => {
-        resolve(req.result)
         this.db = req.result
+        resolve(req.result)
       }
     })
   }
@@ -42,6 +72,10 @@ export class IndexedCacheStore implements CacheStore {
         })
         .catch(onerror)
     }
+  }
+
+  async ready() {
+    await this.dp
   }
 
   async get<T = any>(key: string) {
@@ -115,20 +149,15 @@ export class LocalStorageCacheStore implements CacheStore {
 
   private getJSON(): JSONDataObject {
     const text = localStorage.getItem(this.name)
-    if (text) {
-      const json = JSON.parse(text) as JSONDataObject
-      if (json) {
-        if (!json.data) {
-          json.data = {}
-        }
-        return json
-      }
-    }
-    return { data: {} }
+    return text ? JSON.parse(text) : { data: {} }
   }
 
   private putJSON(json: JSONDataObject) {
     localStorage.setItem(this.name, JSON.stringify(json))
+  }
+
+  async ready() {
+    // nothing
   }
 
   async put<T = any>(
@@ -166,6 +195,10 @@ export class LocalStorageCacheStore implements CacheStore {
   }
 }
 
+/**
+ * Create a `CacheStore` with the given name. If IndexedDB is available,
+ * IndexedDB will be used. Otherwise, localStorage will be used.
+ */
 export function createCacheStore(name: string): CacheStore {
   return window.indexedDB
     ? new IndexedCacheStore(name)
