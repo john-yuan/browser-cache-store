@@ -1,18 +1,28 @@
 # browser-cache-store
 
-A simple cache store that using indexedDB (fallbacks to localStorage if indexedDB is not available).
+[![npm version](https://img.shields.io/npm/v/browser-cache-store.svg)](https://www.npmjs.com/package/browser-cache-store)
+[![install size](https://packagephobia.now.sh/badge?p=browser-cache-store)](https://packagephobia.now.sh/result?p=browser-cache-store)
+[![npm downloads](https://img.shields.io/npm/dm/browser-cache-store.svg)](http://npm-stat.com/charts.html?package=browser-cache-store)
 
-This library provides the following features:
+A simple cache store that uses IndexedDB (falls back to localStorage if IndexedDB is not available).
 
-1. Each operation to the cache store must be atomic.
-2. User can access the previous value before putting a new value.
+This library offers the following features:
 
-Example:
+1. Every operation on the cache store is atomic.
+2. Users can retrieve the previous value associated with a key and replace it with a new value in a single atomic operation.
+
+Installation:
+
+```sh
+npm i browser-cache-store
+```
+
+Examples:
 
 ```ts
 import { createCacheStore } from 'browser-cache-store'
 
-const store = createCacheStore('test_cache_store')
+const store = createCacheStore('the_store_name')
 
 // put value
 store
